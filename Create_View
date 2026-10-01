@@ -1,0 +1,81 @@
+CREATE OR REPLACE
+ALGORITHM = UNDEFINED
+SQL SECURITY DEFINER
+VIEW vw_mh_invoice_data AS
+
+SELECT
+    i.entity_id AS invoice_entity_id,
+    i.increment_id AS Invoice_Number,
+    o.increment_id AS Order_Number,
+    i.created_at AS created_at,
+    o.order_currency_code AS Order_Currency,
+
+    a.po_number AS PO_Number,
+
+    o.status AS Order_Status,
+    i.state AS Order_State,
+
+    ba.firstname AS Bill_Firstname,
+    ba.lastname AS Bill_Lastname,
+    ba.company AS Bill_Company,
+    ba.street AS Bill_Street,
+    ba.city AS Bill_City,
+    ba.region AS Bill_Region,
+    ba.postcode AS Bill_Postcode,
+    ba.country_id AS Bill_Country,
+    ba.telephone AS Bill_Telephone,
+
+    sa.firstname AS Ship_Firstname,
+    sa.lastname AS Ship_Lastname,
+    sa.company AS Ship_Company,
+    sa.street AS Ship_Street,
+    sa.city AS Ship_City,
+    sa.region AS Ship_Region,
+    sa.postcode AS Ship_Postcode,
+    sa.country_id AS Ship_Country,
+    sa.telephone AS Ship_Telephone,
+
+    o.customer_email AS Order_Customer_Email,
+    ce.entity_id AS Customer_Entity_Id,
+    cg.customer_group_code AS Customer_Group_Code,
+
+    o.shipping_description AS Shipping_Method,
+
+    ii.entity_id AS Line_Entity_Id,
+    ii.sku AS Line_SKU,
+    ii.name AS Line_Name,
+    ii.qty AS Line_Qty,
+    ii.price AS Line_Price,
+    ii.discount_amount AS Line_Discount_Amount,
+    ii.row_total AS Line_Row_Total,
+    ii.tax_amount AS Line_Tax_Amount,
+    ii.row_total_incl_tax AS Line_Row_Total_Incl_Tax,
+
+    i.subtotal AS subtotal,
+    i.discount_amount AS discount_amount,
+    i.shipping_amount AS shipping_amount,
+    i.tax_amount AS tax_amount,
+    i.grand_total AS grand_total
+
+FROM mh_sales_invoice AS i
+
+INNER JOIN mh_sales_order AS o
+    ON o.entity_id = i.order_id
+
+LEFT JOIN mh_sales_order_address AS ba
+    ON ba.entity_id = i.billing_address_id
+
+LEFT JOIN mh_sales_order_address AS sa
+    ON sa.entity_id = i.shipping_address_id
+
+LEFT JOIN mh_amasty_order_attribute_grid_flat AS a
+    ON a.parent_id = i.order_id
+
+LEFT JOIN mh_customer_entity AS ce
+    ON ce.entity_id = o.customer_id
+
+LEFT JOIN mh_customer_group AS cg
+    ON cg.customer_group_id = ce.group_id
+
+INNER JOIN mh_sales_invoice_item AS ii
+    ON ii.parent_id = i.entity_id;
