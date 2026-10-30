@@ -42,10 +42,12 @@ SELECT
     o.shipping_description AS Shipping_Method,
 
     ii.entity_id AS Line_Entity_Id,
+    ii.product_id AS product_id,
     ii.sku AS Line_SKU,
     ii.name AS Line_Name,
     ii.qty AS Line_Qty,
     ii.price AS Line_Price,
+    ii.base_cost AS base_cost,
     ii.discount_amount AS Line_Discount_Amount,
     ii.row_total AS Line_Row_Total,
     ii.tax_amount AS Line_Tax_Amount,
